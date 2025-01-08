@@ -111,5 +111,30 @@
         </div>
     </div>
     <a href="https://github.com/boehnen" class="copy">Designed by Justin Boehnen</a></body>
+
+    <!-- Bootstrap Modal -->
+    <div class="modal fade" id="discountModal" tabindex="-1" aria-labelledby="discountModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="discountModalLabel">Special Offer!</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <p>Get 10% off your next Etsy order!</p>
+                    <a href="https://www.etsy.com/shop/theluxeyarnco" class="btn btn-primary">Use code NewYear10</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        window.onload = function() {
+            setTimeout(function() {
+                var discountModal = new bootstrap.Modal(document.getElementById('discountModal'));
+                discountModal.show();
+            }, 2000);
+        }
+    </script>
 </html>
