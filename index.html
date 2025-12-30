@@ -8,160 +8,73 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Sour+Gummy:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-    <style>
-    html{
-        height: 100%;
-        -ms-overflow-style: none;  /* Hide scrollbar for IE and Edge */
-        scrollbar-width: none;     /* Hide scrollbar for Firefox */
-        overflow-y: scroll;        /* Still allow scrolling */
-    }
-
-    html::-webkit-scrollbar {
-        display: none;             /* Hide scrollbar for WebKit browsers */
-    }
-
-    body {
-        padding-top: 2rem;
-        margin: 0;
-        font-family: "Sour Gummy", serif;
-        background-color: #ffe6f2;
-        background-image: url('resources/background.jpg');
-        background-size: cover;
-        background-position: center;
-        background-attachment: fixed;
-        display: flex;
-        flex-direction: column;
-        min-height: 100vh;
-    }
-
-    .main-wrapper {
-        flex: 1;  /* Pushes content down */
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        width: 100%;
-        padding: 5rem 0;
-        box-sizing: border-box;
-    }
-
-    .container {
-        margin-top: auto;
-        max-width: 30rem;
-        width: 90%;
-        background-color: #ffffff;
-        padding: 40px;
-        border-radius: 20px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-        box-sizing: border-box;
-        position: relative;
-    }
-
-    .profile-img {
-        margin-bottom: 20px;
-        width: 100%;
-    }
-
-    h1 {
-        color: #d594b2;
-        margin-bottom: 10px;
-    }
-
-    .link-list {
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
-        margin-top: 20px;
-    }
-
-    .link {
-        border-radius: 100px;
-        padding: 15px 30px;
-        font-size: 1.1em;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.13);
-    }
-
-    .link:hover {
-        background-color: #eac8d8;
-        color: black;
-    }
-
-    .btn-img {
-        margin-right: 0.5rem;
-        height: 20px;
-    }
-
-    /* Footer that sticks to the bottom but is not fixed */
-    .copy {
-        font-family: Arial, Helvetica, sans-serif;
-        text-align: center;
-        width: 100%;
-        font-size: 0.7em;
-        color: black;
-        opacity: 0.6;
-        padding: 1rem 0;
-        margin-top: auto;  /* Pushes footer to the bottom */
-    }
-
-    .copy:hover {
-        opacity: 1.0;
-    }
-
-    @media (max-width: 576px) {
-        .container {
-            padding: 20px;
-            max-width: 90%;
-        }
-
-        .link {
-            padding: 10px 20px;
-            font-size: 1em;
-        }
-    }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body style="height: 100%;">
     <div class="container">
         <img src="resources/logo.svg" alt="Logo" class="profile-img">
         <!-- <h1>The Luxe Yarn Co</h1> -->
         <div class="link-list">
-            <a href="https://www.etsy.com/shop/theluxeyarnco" target="_blank" class="btn btn-outline-dark link d-flex align-items-center justify-content-center">
-                <img class="btn-img" src="resources/etsy.png">Etsy</a>
+            <!-- Amazon Shop with Product Showcase -->
+            <div class="shop-link-wrapper">
+                <a href="https://www.amazon.com/shop/theluxeyarnco" target="_blank" class="btn btn-outline-dark link d-flex align-items-center justify-content-center">
+                    <img class="btn-img" src="resources/amazon.png">Amazon Shop</a>
+                <div class="product-showcase" id="amazonShowcase">
+                    <div class="product-carousel">
+                        <!-- Products will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+            <!-- Etsy Shop with Product Showcase -->
+            <div class="shop-link-wrapper">
+                <a href="https://www.etsy.com/shop/theluxeyarnco" target="_blank" class="btn btn-outline-dark link d-flex align-items-center justify-content-center">
+                    <img class="btn-img" src="resources/etsy.png">Etsy</a>
+                <div class="product-showcase" id="etsyShowcase">
+                    <div class="product-carousel">
+                        <!-- Products will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
             <a href="https://www.tiktok.com/@theluxeyarnco" target="_blank" class="btn btn-outline-dark link d-flex align-items-center justify-content-center">
                 <img class="btn-img" src="resources/tiktok.png">TikTok</a>
             <a href="https://www.instagram.com/theluxeyarnco/" target="_blank" class="btn btn-outline-dark link d-flex align-items-center justify-content-center">
                 <img class="btn-img" src="resources/instagram.png">Instagram</a>
-            <a href="https://www.lemon8-app.com/@theluxeyarnco" target="_blank" class="btn btn-outline-dark link d-flex align-items-center justify-content-center">
-                <img class="btn-img" src="resources/lemon8.png">Lemon8</a>
+            <!--<a href="https://www.lemon8-app.com/@theluxeyarnco" target="_blank" class="btn btn-outline-dark link d-flex align-items-center justify-content-center">
+                <img class="btn-img" src="resources/lemon8.png">Lemon8</a>-->
             <a href="https://www.facebook.com/the.luxe.yarn.co" target="_blank" class="btn btn-outline-dark link d-flex align-items-center justify-content-center">
                 <img class="btn-img" src="resources/facebook.png">Facebook</a>
-            <a href="mailto:cierra@theluxeyarn.co" target="_blank" class="btn btn-outline-dark link d-flex align-items-center justify-content-center">
-                <img class="btn-img" src="resources/envelope.png">Email Me</a>
+            <!--<a href="mailto:cierra@theluxeyarn.co" target="_blank" class="btn btn-outline-dark link d-flex align-items-center justify-content-center">
+                <img class="btn-img" src="resources/envelope.png">Email Me</a>-->
         </div>
     </div>
-    <a href="https://github.com/boehnen" class="copy">Designed by Justin Boehnen</a>
+    <a href="https://github.com/boehnen" class="copy">Created by Justin Boehnen</a>
 </body>
 <div class="modal fade" id="discountModal" tabindex="-1" aria-labelledby="discountModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-sm">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="discountModalLabel">Special Offer!</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content discount-modal-content">
+            <div class="discount-modal-header">
+                <div class="discount-emoji">🎉</div>
+                <h2 class="discount-title">Special Offer!</h2>
+                <button type="button" class="btn-close discount-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body text-center">
-                <p>Get 10% off your next Etsy order!</p>
-                <a href="https://www.etsy.com/shop/theluxeyarnco" class="btn btn-primary">Use code LuxeSummer10</a>
+            <div class="modal-body discount-modal-body">
+                <p class="discount-message">Get <span class="discount-percent">10% OFF</span> your next Etsy order!</p>
+                <div class="discount-code-wrapper">
+                    <div class="discount-code-label">Use code:</div>
+                    <div class="discount-code" id="discountCode">NewYear10</div>
+                    <button class="discount-copy-btn" onclick="copyDiscountCode()" title="Copy code">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M5.5 3.5H3.5C2.67 3.5 2 4.17 2 5V12.5C2 13.33 2.67 14 3.5 14H9.5C10.33 14 11 13.33 11 12.5V10.5M5.5 3.5H11.5C12.33 3.5 13 4.17 13 5V7.5M5.5 3.5V5.5C5.5 6.33 6.17 7 7 7H9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                        </svg>
+                    </button>
+                </div>
+                <a href="https://www.etsy.com/shop/theluxeyarnco" class="btn discount-cta-btn" target="_blank">
+                    Shop Now! ✨
+                </a>
             </div>
         </div>
     </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    window.onload = function() {
-        setTimeout(function() {
-            var discountModal = new bootstrap.Modal(document.getElementById('discountModal'));
-            discountModal.show();
-        }, 1600);
-    }
-</script>
+<script src="script.js"></script>
 </html>
