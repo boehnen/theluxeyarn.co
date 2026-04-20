@@ -1,84 +1,210 @@
 <!DOCTYPE html>
-<html style="height: 100%;" lang="en">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Luxe Yarn Co</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>The Luxe Yarn Co | Handcrafted Yarn & Crochet</title>
+    <meta name="description" content="Beautiful handcrafted yarn and crochet creations. Shop our collection of luxurious, cozy pieces.">
+
+    <!-- Open Graph / Social Sharing -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://theluxeyarn.co/">
+    <meta property="og:title" content="The Luxe Yarn Co | Handcrafted Yarn & Crochet">
+    <meta property="og:description" content="Beautiful handcrafted yarn and crochet creations. Shop our collection of luxurious, cozy pieces.">
+    <meta property="og:image" content="https://theluxeyarn.co/resources/social-share.jpg">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="The Luxe Yarn Co | Handcrafted Yarn & Crochet">
+    <meta name="twitter:description" content="Beautiful handcrafted yarn and crochet creations. Shop our collection of luxurious, cozy pieces.">
+    <meta name="twitter:image" content="https://theluxeyarn.co/resources/social-share.jpg">
+
+    <!-- Google Analytics - Replace GA_MEASUREMENT_ID with your ID -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'GA_MEASUREMENT_ID');
+    </script>
+
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Sour+Gummy:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Nunito:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Styles -->
     <link rel="stylesheet" href="styles.css">
+
+    <!-- Favicons -->
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
     <link rel="manifest" href="/site.webmanifest">
 </head>
-<body style="height: 100%;">
-    <div class="container">
-        <img src="resources/logo.svg" alt="Logo" class="profile-img">
-        <!-- <h1>The Luxe Yarn Co</h1> -->
-        <div class="link-list">
-            <!-- Amazon Shop with Product Showcase -->
-            <div class="shop-link-wrapper">
-                <a href="https://www.amazon.com/shop/theluxeyarnco" target="_blank" class="btn btn-outline-dark link d-flex align-items-center justify-content-center">
-                    <img class="btn-img" src="resources/amazon.png">Amazon Shop</a>
-                <div class="product-showcase" id="amazonShowcase">
-                    <div class="product-carousel">
-                        <!-- Products will be populated by JavaScript -->
+<body>
+    <!-- Decorative yarn ball elements -->
+    <div class="yarn-decoration yarn-1"></div>
+    <div class="yarn-decoration yarn-2"></div>
+
+    <main class="main-container">
+        <!-- Logo Section -->
+        <header class="header">
+            <img src="resources/logo.svg" alt="The Luxe Yarn Co" class="logo">
+            <p class="tagline">Handcrafted with love</p>
+        </header>
+
+        <!-- Shopify Product Collection -->
+        <section class="product-section">
+            <div id="collection-component-1776710229535"></div>
+        </section>
+
+        <!-- Primary CTA -->
+        <section class="cta-section">
+            <a href="https://shop.theluxeyarn.co" target="_blank" class="btn-shop">
+                <span class="btn-text">View Full Collection</span>
+                <span class="btn-arrow">→</span>
+            </a>
+        </section>
+
+        <!-- Testimonials -->
+        <section class="testimonials-section">
+            <div class="testimonials-carousel" id="testimonialsCarousel">
+                <div class="testimonial active">
+                    <div class="testimonial-stars">★★★★★</div>
+                    <p class="testimonial-text">"Words cannot express how happy I am with my appa, he is everything I expected and more! He's filled with so much love and happiness!"</p>
+                    <div class="testimonial-footer">
+                        <img src="https://i.etsystatic.com/iap/d85a94/6957598769/iap_300x300.6957598769_ifvvawwu.jpg?version=0" alt="Customer photo" class="testimonial-image">
+                        <div class="testimonial-info">
+                            <p class="testimonial-author">— Martha</p>
+                            <span class="testimonial-platform etsy">Etsy</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial">
+                    <div class="testimonial-stars">★★★★★</div>
+                    <p class="testimonial-text">"I am AMAZED! I love love love the bunny in frog overalls she made for my daughter! It is bigger than I expected & gorgeous!"</p>
+                    <div class="testimonial-footer">
+                        <img src="resources/reviews/allison.png" alt="Customer photo" class="testimonial-image">
+                        <div class="testimonial-info">
+                            <p class="testimonial-author">— Allison</p>
+                            <span class="testimonial-platform tiktok">TikTok Shop</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial">
+                    <div class="testimonial-stars">★★★★★</div>
+                    <p class="testimonial-text">"The House Elf I ordered is absolutely stunning. The details including the toes, sparkly eyes, and outfit are amazing. Best quality!"</p>
+                    <div class="testimonial-footer">
+                        <img src="resources/reviews/trinketgirl.png" alt="Customer photo" class="testimonial-image">
+                        <div class="testimonial-info">
+                            <p class="testimonial-author">— Trinket Girl</p>
+                            <span class="testimonial-platform tiktok">TikTok Shop</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial">
+                    <div class="testimonial-stars">★★★★★</div>
+                    <p class="testimonial-text">"Absolutely love this crocheted Appa! The quality is incredible - super soft yarn, tightly stitched, and clearly made with care!"</p>
+                    <div class="testimonial-footer">
+                        <img src="https://i.etsystatic.com/iap/3655f3/6857670733/iap_300x300.6857670733_odvdj2za.jpg?version=0" alt="Customer photo" class="testimonial-image">
+                        <div class="testimonial-info">
+                            <p class="testimonial-author">— Gabriella</p>
+                            <span class="testimonial-platform etsy">Etsy</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial">
+                    <div class="testimonial-stars">★★★★★</div>
+                    <p class="testimonial-text">"Thank you for putting my imagination into something real! These buddies now hang out with me in my gaming room. They are so magical!"</p>
+                    <div class="testimonial-footer">
+                        <img src="resources/reviews/iko.png" alt="Customer photo" class="testimonial-image">
+                        <div class="testimonial-info">
+                            <p class="testimonial-author">— iko</p>
+                            <span class="testimonial-platform tiktok">TikTok Shop</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial">
+                    <div class="testimonial-stars">★★★★★</div>
+                    <p class="testimonial-text">"I love this strawberry dinosaur! It's adorable, really soft and bigger than I expected. So well made!"</p>
+                    <div class="testimonial-footer">
+                        <img src="https://i.etsystatic.com/iap/99fd9f/5934571494/iap_300x300.5934571494_qvtn07mk.jpg?version=0" alt="Customer photo" class="testimonial-image">
+                        <div class="testimonial-info">
+                            <p class="testimonial-author">— Brielle</p>
+                            <span class="testimonial-platform etsy">Etsy</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial">
+                    <div class="testimonial-stars">★★★★★</div>
+                    <p class="testimonial-text">"His little overalls say he's ready to carry me through the rest of 2026. I promise you love him forever. Thank you!"</p>
+                    <div class="testimonial-footer">
+                        <img src="resources/reviews/conuncoffee.png" alt="Customer photo" class="testimonial-image">
+                        <div class="testimonial-info">
+                            <p class="testimonial-author">— conuncoffee</p>
+                            <span class="testimonial-platform tiktok">TikTok Shop</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial">
+                    <div class="testimonial-stars">★★★★★</div>
+                    <p class="testimonial-text">"I ordered a custom bee for our little girl and it exceeded my expectations! So soft, adorable, and high quality."</p>
+                    <div class="testimonial-footer">
+                        <img src="https://i.etsystatic.com/iap/2cd629/5850252643/iap_300x300.5850252643_70ck6buo.jpg?version=0" alt="Customer photo" class="testimonial-image">
+                        <div class="testimonial-info">
+                            <p class="testimonial-author">— Trinity</p>
+                            <span class="testimonial-platform etsy">Etsy</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial">
+                    <div class="testimonial-stars">★★★★★</div>
+                    <p class="testimonial-text">"Cutest cat loaf ever! I love him so much... fast shipping and great price too!"</p>
+                    <div class="testimonial-footer">
+                        <img src="resources/reviews/carrie.png" alt="Customer photo" class="testimonial-image">
+                        <div class="testimonial-info">
+                            <p class="testimonial-author">— Carrie</p>
+                            <span class="testimonial-platform tiktok">TikTok Shop</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial">
+                    <div class="testimonial-stars">★★★★★</div>
+                    <p class="testimonial-text">"The seller was very responsive and super sweet! I am totally in love with my item. 10/10 recommend!"</p>
+                    <div class="testimonial-footer">
+                        <img src="https://i.etsystatic.com/iap/2eaf48/5781758736/iap_300x300.5781758736_overpd3t.jpg?version=0" alt="Customer photo" class="testimonial-image">
+                        <div class="testimonial-info">
+                            <p class="testimonial-author">— Brenda</p>
+                            <span class="testimonial-platform etsy">Etsy</span>
+                        </div>
                     </div>
                 </div>
             </div>
-            <!-- Etsy Shop with Product Showcase -->
-            <div class="shop-link-wrapper">
-                <a href="https://www.etsy.com/shop/theluxeyarnco" target="_blank" class="btn btn-outline-dark link d-flex align-items-center justify-content-center">
-                    <img class="btn-img" src="resources/etsy.png">Etsy</a>
-                <div class="product-showcase" id="etsyShowcase">
-                    <div class="product-carousel">
-                        <!-- Products will be populated by JavaScript -->
-                    </div>
-                </div>
-            </div>
-            <a href="https://www.tiktok.com/@theluxeyarnco" target="_blank" class="btn btn-outline-dark link d-flex align-items-center justify-content-center">
-                <img class="btn-img" src="resources/tiktok.png">TikTok</a>
-            <a href="https://www.instagram.com/theluxeyarnco/" target="_blank" class="btn btn-outline-dark link d-flex align-items-center justify-content-center">
-                <img class="btn-img" src="resources/instagram.png">Instagram</a>
-            <!--<a href="https://www.lemon8-app.com/@theluxeyarnco" target="_blank" class="btn btn-outline-dark link d-flex align-items-center justify-content-center">
-                <img class="btn-img" src="resources/lemon8.png">Lemon8</a>-->
-            <a href="https://www.facebook.com/profile.php?id=61584236970726" target="_blank" class="btn btn-outline-dark link d-flex align-items-center justify-content-center">
-                <img class="btn-img" src="resources/facebook.png">Facebook</a>
-            <!--<a href="mailto:cierra@theluxeyarn.co" target="_blank" class="btn btn-outline-dark link d-flex align-items-center justify-content-center">
-                <img class="btn-img" src="resources/envelope.png">Email Me</a>-->
-        </div>
-    </div>
-    <a href="https://github.com/boehnen" class="copy">Created by Justin Boehnen</a>
-</body>
-<div class="modal fade" id="discountModal" tabindex="-1" aria-labelledby="discountModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content discount-modal-content">
-            <div class="discount-modal-header">
-                <div class="discount-emoji">🎉</div>
-                <h2 class="discount-title">Special Offer!</h2>
-                <button type="button" class="btn-close discount-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body discount-modal-body">
-                <p class="discount-message">Get <span class="discount-percent">10% OFF</span> your next Etsy order!</p>
-                <div class="discount-code-wrapper">
-                    <div class="discount-code-label">Use code:</div>
-                    <div class="discount-code" id="discountCode">NewYear10</div>
-                    <button class="discount-copy-btn" onclick="copyDiscountCode()" title="Copy code">
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M5.5 3.5H3.5C2.67 3.5 2 4.17 2 5V12.5C2 13.33 2.67 14 3.5 14H9.5C10.33 14 11 13.33 11 12.5V10.5M5.5 3.5H11.5C12.33 3.5 13 4.17 13 5V7.5M5.5 3.5V5.5C5.5 6.33 6.17 7 7 7H9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                        </svg>
-                    </button>
-                </div>
-                <a href="https://www.etsy.com/shop/theluxeyarnco" class="btn discount-cta-btn" target="_blank">
-                    Shop Now! ✨
+            <div class="testimonial-dots" id="testimonialDots"></div>
+        </section>
+
+        <!-- Social Links -->
+        <section class="social-section">
+            <p class="social-label">Follow my journey</p>
+            <div class="social-links">
+                <a href="https://www.tiktok.com/@theluxeyarnco" target="_blank" class="social-link" aria-label="TikTok">
+                    <img src="resources/tiktok.png" alt="TikTok" class="social-icon">
+                    <span>TikTok</span>
+                </a>
+                <a href="https://www.instagram.com/theluxeyarnco/" target="_blank" class="social-link" aria-label="Instagram">
+                    <img src="resources/instagram.png" alt="Instagram" class="social-icon">
+                    <span>Instagram</span>
+                </a>
+                <a href="https://www.facebook.com/the.luxe.yarn.co" target="_blank" class="social-link" aria-label="Facebook">
+                    <img src="resources/facebook.png" alt="Facebook" class="social-icon">
+                    <span>Facebook</span>
                 </a>
             </div>
-        </div>
-    </div>
-</div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="script.js"></script>
+        </section>
+    </main>
+
+    <!-- Shopify Buy Button SDK -->
+    <script src="script.js"></script>
+</body>
 </html>
