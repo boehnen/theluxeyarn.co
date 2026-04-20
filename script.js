@@ -1,5 +1,5 @@
 /* ========================================
-   The Luxe Yarn Co - Shopify Buy Button
+   The Luxe Yarn Co - Custom Shopify Integration
    ======================================== */
 
 // Testimonial Carousel
@@ -45,327 +45,329 @@ document.addEventListener('DOMContentLoaded', function() {
     autoRotate = setInterval(nextSlide, 5000);
 });
 
-// Shopify Buy Button
-(function () {
-    var scriptURL = 'https://sdks.shopifycdn.com/buy-button/latest/buy-button-storefront.min.js';
+// Shopify Configuration
+const SHOPIFY_DOMAIN = 'ycq1ca-jy.myshopify.com';
+const STOREFRONT_TOKEN = '5f1115e8ba06b85dfc55f6fc89f136e5'; // Has inventory access
+const CART_TOKEN = '1a15380bfdef78c677355b167aa5cd12'; // Buy Button token for cart
+const COLLECTION_ID = 'gid://shopify/Collection/538440794413';
 
-    if (window.ShopifyBuy) {
-        if (window.ShopifyBuy.UI) {
-            ShopifyBuyInit();
-        } else {
-            loadScript();
+// Initialize Shopify Buy SDK for cart functionality
+let shopifyClient = null;
+let shopifyUI = null;
+let cart = null;
+
+async function initShopify() {
+    // Load the Buy Button SDK
+    const scriptURL = 'https://sdks.shopifycdn.com/buy-button/latest/buy-button-storefront.min.js';
+
+    await new Promise((resolve) => {
+        if (window.ShopifyBuy && window.ShopifyBuy.UI) {
+            resolve();
+            return;
         }
-    } else {
-        loadScript();
-    }
-
-    function loadScript() {
-        var script = document.createElement('script');
+        const script = document.createElement('script');
         script.async = true;
         script.src = scriptURL;
-        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(script);
-        script.onload = ShopifyBuyInit;
-    }
+        script.onload = resolve;
+        document.head.appendChild(script);
+    });
 
-    function ShopifyBuyInit() {
-        var client = ShopifyBuy.buildClient({
-            domain: 'ycq1ca-jy.myshopify.com',
-            storefrontAccessToken: '1a15380bfdef78c677355b167aa5cd12',
-        });
+    // Initialize client with cart token for checkout functionality
+    shopifyClient = ShopifyBuy.buildClient({
+        domain: SHOPIFY_DOMAIN,
+        storefrontAccessToken: CART_TOKEN,
+    });
 
-        ShopifyBuy.UI.onReady(client).then(function (ui) {
-            ui.createComponent('collection', {
-                id: '538440794413',
-                node: document.getElementById('collection-component-1776710229535'),
-                moneyFormat: '%24%7B%7Bamount%7D%7D',
-                options: {
-                    "product": {
-                        "styles": {
-                            "product": {
-                                "@media (min-width: 601px)": {
-                                    "max-width": "calc(33.33% - 20px)",
-                                    "margin-left": "20px",
-                                    "margin-bottom": "30px",
-                                    "width": "calc(33.33% - 20px)"
-                                },
-                                "@media (max-width: 600px)": {
-                                    "max-width": "calc(50% - 10px)",
-                                    "margin-left": "10px",
-                                    "margin-bottom": "20px"
-                                },
-                                "img": {
-                                    "height": "calc(100% - 15px)",
-                                    "position": "absolute",
-                                    "left": "0",
-                                    "right": "0",
-                                    "top": "0",
-                                    "border-radius": "16px"
-                                },
-                                "imgWrapper": {
-                                    "padding-top": "calc(100% + 15px)",
-                                    "position": "relative",
-                                    "height": "0"
-                                }
-                            },
-                            "title": {
-                                "font-family": "Nunito, sans-serif",
-                                "font-size": "14px",
-                                "font-weight": "600",
-                                "color": "#4a4a4a"
-                            },
-                            "button": {
-                                "font-family": "Nunito, sans-serif",
-                                "font-size": "13px",
-                                "font-weight": "600",
-                                "padding": "10px 20px",
-                                ":hover": {
-                                    "background-color": "#c9a190"
-                                },
-                                "background-color": "#d4a5a5",
-                                ":focus": {
-                                    "background-color": "#c9a190"
-                                },
-                                "border-radius": "50px"
-                            },
-                            "price": {
-                                "font-family": "Nunito, sans-serif",
-                                "font-size": "14px",
-                                "color": "#8b7355"
-                            },
-                            "compareAt": {
-                                "font-family": "Nunito, sans-serif",
-                                "color": "#8b7355"
-                            },
-                            "unitPrice": {
-                                "font-family": "Nunito, sans-serif",
-                                "color": "#8b7355"
-                            }
-                        },
-                        "text": {
-                            "button": "Add to cart"
-                        }
+    // Initialize UI with just the cart
+    shopifyUI = await ShopifyBuy.UI.onReady(shopifyClient);
+
+    // Create cart component
+    shopifyUI.createComponent('cart', {
+        node: document.getElementById('cart-container'),
+        options: {
+            "cart": {
+                "styles": {
+                    "button": {
+                        "font-family": "Nunito, sans-serif",
+                        "font-weight": "600",
+                        ":hover": { "background-color": "#c9a190" },
+                        "background-color": "#d4a5a5",
+                        ":focus": { "background-color": "#c9a190" },
+                        "border-radius": "50px"
                     },
-                    "productSet": {
-                        "styles": {
-                            "products": {
-                                "@media (min-width: 601px)": {
-                                    "margin-left": "-20px"
-                                },
-                                "@media (max-width: 600px)": {
-                                    "margin-left": "-10px"
-                                }
-                            }
-                        }
+                    "title": {
+                        "font-family": "Playfair Display, serif",
+                        "color": "#4a4a4a"
                     },
-                    "modalProduct": {
-                        "contents": {
-                            "img": false,
-                            "imgWithCarousel": true,
-                            "button": false,
-                            "buttonWithQuantity": true
-                        },
-                        "styles": {
-                            "product": {
-                                "@media (min-width: 601px)": {
-                                    "max-width": "100%",
-                                    "margin-left": "0px",
-                                    "margin-bottom": "0px"
-                                }
-                            },
-                            "button": {
-                                "font-family": "Nunito, sans-serif",
-                                "font-weight": "600",
-                                ":hover": {
-                                    "background-color": "#c9a190"
-                                },
-                                "background-color": "#d4a5a5",
-                                ":focus": {
-                                    "background-color": "#c9a190"
-                                },
-                                "border-radius": "50px"
-                            },
-                            "title": {
-                                "font-family": "Playfair Display, serif",
-                                "font-weight": "600",
-                                "font-size": "24px",
-                                "color": "#4a4a4a"
-                            },
-                            "price": {
-                                "font-family": "Nunito, sans-serif",
-                                "font-weight": "500",
-                                "font-size": "18px",
-                                "color": "#8b7355"
-                            },
-                            "compareAt": {
-                                "font-family": "Nunito, sans-serif",
-                                "font-weight": "normal",
-                                "font-size": "15px",
-                                "color": "#8b7355"
-                            },
-                            "unitPrice": {
-                                "font-family": "Nunito, sans-serif",
-                                "font-weight": "normal",
-                                "font-size": "15px",
-                                "color": "#8b7355"
-                            }
-                        },
-                        "text": {
-                            "button": "Add to cart"
-                        }
+                    "header": {
+                        "font-family": "Nunito, sans-serif",
+                        "color": "#4a4a4a"
                     },
-                    "option": {
-                        "styles": {
-                            "label": {
-                                "font-family": "Nunito, sans-serif"
-                            },
-                            "select": {
-                                "font-family": "Nunito, sans-serif"
-                            }
-                        }
+                    "lineItems": {
+                        "font-family": "Nunito, sans-serif",
+                        "color": "#4a4a4a"
+                    },
+                    "subtotalText": {
+                        "font-family": "Nunito, sans-serif",
+                        "color": "#4a4a4a"
+                    },
+                    "subtotal": {
+                        "font-family": "Nunito, sans-serif",
+                        "color": "#4a4a4a"
+                    },
+                    "notice": {
+                        "font-family": "Nunito, sans-serif",
+                        "color": "#7a7a7a"
+                    },
+                    "currency": {
+                        "font-family": "Nunito, sans-serif",
+                        "color": "#4a4a4a"
+                    },
+                    "close": {
+                        "color": "#4a4a4a",
+                        ":hover": { "color": "#4a4a4a" }
                     },
                     "cart": {
-                        "styles": {
-                            "button": {
-                                "font-family": "Nunito, sans-serif",
-                                "font-weight": "600",
-                                ":hover": {
-                                    "background-color": "#c9a190"
-                                },
-                                "background-color": "#d4a5a5",
-                                ":focus": {
-                                    "background-color": "#c9a190"
-                                },
-                                "border-radius": "50px"
-                            },
-                            "title": {
-                                "font-family": "Playfair Display, serif",
-                                "color": "#4a4a4a"
-                            },
-                            "header": {
-                                "font-family": "Nunito, sans-serif",
-                                "color": "#4a4a4a"
-                            },
-                            "lineItems": {
-                                "font-family": "Nunito, sans-serif",
-                                "color": "#4a4a4a"
-                            },
-                            "subtotalText": {
-                                "font-family": "Nunito, sans-serif",
-                                "color": "#4a4a4a"
-                            },
-                            "subtotal": {
-                                "font-family": "Nunito, sans-serif",
-                                "color": "#4a4a4a"
-                            },
-                            "notice": {
-                                "font-family": "Nunito, sans-serif",
-                                "color": "#7a7a7a"
-                            },
-                            "currency": {
-                                "font-family": "Nunito, sans-serif",
-                                "color": "#4a4a4a"
-                            },
-                            "close": {
-                                "color": "#4a4a4a",
-                                ":hover": {
-                                    "color": "#4a4a4a"
-                                }
-                            },
-                            "empty": {
-                                "font-family": "Nunito, sans-serif",
-                                "color": "#7a7a7a"
-                            },
-                            "noteDescription": {
-                                "font-family": "Nunito, sans-serif",
-                                "color": "#4a4a4a"
-                            },
-                            "discountText": {
-                                "font-family": "Nunito, sans-serif",
-                                "color": "#4a4a4a"
-                            },
-                            "discountIcon": {
-                                "fill": "#4a4a4a"
-                            },
-                            "discountAmount": {
-                                "font-family": "Nunito, sans-serif",
-                                "color": "#4a4a4a"
-                            },
-                            "cart": {
-                                "background-color": "#fffaf5"
-                            },
-                            "footer": {
-                                "background-color": "#fffaf5"
-                            }
-                        },
-                        "text": {
-                            "total": "Subtotal",
-                            "notice": "Shipping calculated at checkout (free orders $35+)",
-                            "button": "Checkout"
-                        },
-                        "popup": false
+                        "background-color": "#fffaf5"
                     },
-                    "toggle": {
-                        "styles": {
-                            "toggle": {
-                                "font-family": "Nunito, sans-serif",
-                                "background-color": "#d4a5a5",
-                                ":hover": {
-                                    "background-color": "#c9a190"
-                                },
-                                ":focus": {
-                                    "background-color": "#c9a190"
-                                }
-                            },
-                            "count": {
-                                "font-family": "Nunito, sans-serif"
-                            }
-                        }
-                    },
-                    "lineItem": {
-                        "styles": {
-                            "variantTitle": {
-                                "font-family": "Nunito, sans-serif",
-                                "color": "#7a7a7a"
-                            },
-                            "title": {
-                                "font-family": "Nunito, sans-serif",
-                                "color": "#4a4a4a"
-                            },
-                            "price": {
-                                "font-family": "Nunito, sans-serif",
-                                "color": "#4a4a4a"
-                            },
-                            "fullPrice": {
-                                "font-family": "Nunito, sans-serif",
-                                "color": "#7a7a7a"
-                            },
-                            "discount": {
-                                "font-family": "Nunito, sans-serif",
-                                "color": "#d4a5a5"
-                            },
-                            "discountIcon": {
-                                "fill": "#d4a5a5"
-                            },
-                            "quantity": {
-                                "font-family": "Nunito, sans-serif",
-                                "color": "#4a4a4a"
-                            },
-                            "quantityIncrement": {
-                                "color": "#4a4a4a",
-                                "border-color": "#d4a5a5"
-                            },
-                            "quantityDecrement": {
-                                "color": "#4a4a4a",
-                                "border-color": "#d4a5a5"
-                            },
-                            "quantityInput": {
-                                "color": "#4a4a4a",
-                                "border-color": "#d4a5a5"
-                            }
-                        }
+                    "footer": {
+                        "background-color": "#fffaf5"
                     }
                 },
-            });
+                "text": {
+                    "total": "Subtotal",
+                    "notice": "Shipping calculated at checkout (free orders $35+)",
+                    "button": "Checkout"
+                },
+                "popup": false
+            },
+            "toggle": {
+                "styles": {
+                    "toggle": {
+                        "font-family": "Nunito, sans-serif",
+                        "background-color": "#d4a5a5",
+                        ":hover": { "background-color": "#c9a190" },
+                        ":focus": { "background-color": "#c9a190" }
+                    },
+                    "count": {
+                        "font-family": "Nunito, sans-serif"
+                    }
+                }
+            },
+            "lineItem": {
+                "styles": {
+                    "variantTitle": {
+                        "font-family": "Nunito, sans-serif",
+                        "color": "#7a7a7a"
+                    },
+                    "title": {
+                        "font-family": "Nunito, sans-serif",
+                        "color": "#4a4a4a"
+                    },
+                    "price": {
+                        "font-family": "Nunito, sans-serif",
+                        "color": "#4a4a4a"
+                    },
+                    "quantity": {
+                        "font-family": "Nunito, sans-serif",
+                        "color": "#4a4a4a"
+                    },
+                    "quantityIncrement": {
+                        "color": "#4a4a4a",
+                        "border-color": "#d4a5a5"
+                    },
+                    "quantityDecrement": {
+                        "color": "#4a4a4a",
+                        "border-color": "#d4a5a5"
+                    },
+                    "quantityInput": {
+                        "color": "#4a4a4a",
+                        "border-color": "#d4a5a5"
+                    }
+                }
+            }
+        }
+    });
+
+    // Fetch and render products
+    await fetchAndRenderProducts();
+}
+
+async function fetchAndRenderProducts() {
+    const query = `
+        query {
+            collection(id: "${COLLECTION_ID}") {
+                products(first: 20) {
+                    edges {
+                        node {
+                            id
+                            title
+                            handle
+                            images(first: 2) {
+                                edges {
+                                    node {
+                                        url
+                                        altText
+                                    }
+                                }
+                            }
+                            variants(first: 1) {
+                                edges {
+                                    node {
+                                        id
+                                        price {
+                                            amount
+                                            currencyCode
+                                        }
+                                        availableForSale
+                                        quantityAvailable
+                                        currentlyNotInStock
+                                    }
+                                }
+                            }
+                            totalInventory
+                        }
+                    }
+                }
+            }
+        }
+    `;
+
+    try {
+        const response = await fetch(`https://${SHOPIFY_DOMAIN}/api/2024-01/graphql.json`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Shopify-Storefront-Access-Token': STOREFRONT_TOKEN,
+            },
+            body: JSON.stringify({ query }),
         });
+
+        const data = await response.json();
+        const products = data.data.collection.products.edges.map(edge => edge.node);
+        renderProducts(products);
+    } catch (error) {
+        console.error('Error fetching products:', error);
     }
-})();
+}
+
+function renderProducts(products) {
+    const container = document.getElementById('product-grid');
+    container.innerHTML = '';
+
+    products.forEach(product => {
+        const variant = product.variants.edges[0]?.node;
+        const images = product.images.edges.map(e => e.node);
+        const image = images[0];
+        const hoverImage = images[1] || images[0]; // Second image for hover, fallback to first
+        const price = parseFloat(variant?.price?.amount || 0);
+        const available = variant?.availableForSale;
+        const quantity = variant?.quantityAvailable;
+
+
+
+
+        // Determine inventory badge (quantity may be null if not tracked)
+        let badge = '';
+        if (!available) {
+            badge = '<span class="product-badge sold-out">Sold Out</span>';
+        } else if (quantity !== null && quantity === 0) {
+            badge = '<span class="product-badge sold-out">Sold Out</span>';
+        } else if (quantity !== null && quantity === 1) {
+            badge = '<span class="product-badge last-one">Last One!</span>';
+        } else if (quantity !== null && quantity <= 3) {
+            badge = '<span class="product-badge low-stock">Only ' + quantity + ' left</span>';
+        }
+        // If quantity is null, product is available but inventory isn't tracked - no badge
+
+        // Check if product is actually available (null quantity means unlimited/not tracked)
+        const isAvailable = available && (quantity === null || quantity > 0);
+
+        const card = document.createElement('div');
+        card.className = 'product-card' + (!isAvailable ? ' unavailable' : '');
+        const productUrl = `https://shop.theluxeyarn.co/products/${product.handle}`;
+
+        card.innerHTML = `
+            <a href="${productUrl}" target="_blank" class="product-image-wrapper">
+                ${badge}
+                <img src="${image?.url || ''}" alt="${image?.altText || product.title}" class="product-image product-image-main" loading="lazy">
+                <img src="${hoverImage?.url || ''}" alt="${hoverImage?.altText || product.title}" class="product-image product-image-hover" loading="lazy">
+            </a>
+            <h3 class="product-title">${product.title}</h3>
+            <p class="product-price">$${price.toFixed(2)}</p>
+            <button class="product-button" data-variant-id="${variant?.id}" ${!isAvailable ? 'disabled' : ''}>
+                ${!isAvailable ? 'Sold Out' : 'Add to Cart'}
+            </button>
+        `;
+
+        // Add to cart functionality
+        const button = card.querySelector('.product-button');
+        if (isAvailable) {
+            button.addEventListener('click', () => addToCart(variant.id, button));
+        }
+
+        container.appendChild(card);
+    });
+}
+
+async function addToCart(variantId, button) {
+    button.disabled = true;
+    button.textContent = 'Adding...';
+
+    try {
+        const cart = shopifyUI.components.cart[0];
+
+        const lineItemsToAdd = [{
+            variantId: variantId,
+            quantity: 1
+        }];
+
+        let updatedCheckout;
+
+        // Check if cart has a checkout, if not create one
+        if (!cart.model || !cart.model.id) {
+            // Create a new checkout with the item
+            updatedCheckout = await shopifyClient.checkout.create({
+                lineItems: lineItemsToAdd
+            });
+            // Store checkout ID for future use
+            cart.model = updatedCheckout;
+        } else {
+            // Add to existing checkout
+            updatedCheckout = await shopifyClient.checkout.addLineItems(cart.model.id, lineItemsToAdd);
+            cart.model = updatedCheckout;
+        }
+
+        // Use SDK's native method to sync and render
+        try {
+            await cart.fetchData();
+        } catch (e) {
+            // Fallback: manually trigger render
+            cart.view.render();
+        }
+
+        // Update toggle
+        if (cart.toggles && cart.toggles[0]) {
+            cart.toggles[0].view.render();
+        }
+
+        // Open the cart
+        cart.open();
+
+        button.textContent = 'Added!';
+        setTimeout(() => {
+            button.textContent = 'Add to Cart';
+            button.disabled = false;
+        }, 1500);
+    } catch (error) {
+        console.error('Error adding to cart:', error);
+        button.textContent = 'Error';
+        setTimeout(() => {
+            button.textContent = 'Add to Cart';
+            button.disabled = false;
+        }, 1500);
+    }
+}
+
+// Initialize everything
+initShopify();

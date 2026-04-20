@@ -97,45 +97,154 @@ body {
     letter-spacing: 0.05em;
 }
 
-/* Product Section - Shopify Buy Button */
+/* Product Section - Grid Layout */
 .product-section {
     margin-bottom: 2rem;
     animation: fadeInUp 0.8s ease-out 0.2s both;
+}
+
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+}
+
+@media (min-width: 500px) {
+    .product-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (min-width: 650px) {
+    .product-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+/* Product Card */
+.product-card {
     background: var(--warm-white);
-    border-radius: 24px;
-    padding: 1.25rem;
+    border-radius: 20px;
+    padding: 12px;
     box-shadow: var(--shadow-soft);
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* Override Shopify Buy Button styles to match theme */
-.product-section iframe {
-    border-radius: 16px;
+.product-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-hover);
 }
 
-/* Shopify collection component overrides */
-.shopify-buy__collection {
-    padding: 0 !important;
+.product-card.unavailable {
+    opacity: 0.7;
 }
 
-.shopify-buy__product {
-    margin-bottom: 1rem !important;
+.product-image-wrapper {
+    position: relative;
+    margin-bottom: 10px;
+    display: block;
+    text-decoration: none;
+    overflow: hidden;
+    border-radius: 14px;
 }
 
-.shopify-buy__product__title {
-    font-family: 'Nunito', sans-serif !important;
+
+.product-image {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: 14px;
+    display: block;
+    transition: opacity 0.3s ease;
 }
 
-.shopify-buy__product__price {
-    font-family: 'Nunito', sans-serif !important;
+.product-image-main {
+    position: relative;
 }
 
-/* Product images hover effect */
-.shopify-buy__product img {
-    transition: transform 0.3s ease !important;
+.product-image-hover {
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
 }
 
-.shopify-buy__product:hover img {
-    transform: scale(1.03);
+.product-image-wrapper:hover .product-image-main {
+    opacity: 0;
+}
+
+.product-image-wrapper:hover .product-image-hover {
+    opacity: 1;
+}
+
+.product-badge {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    z-index: 10;
+}
+
+.product-badge.sold-out {
+    background: var(--text-light);
+    color: white;
+}
+
+.product-badge.last-one {
+    background: #E57373;
+    color: white;
+}
+
+.product-badge.low-stock {
+    background: #FFB74D;
+    color: white;
+}
+
+.product-title {
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin: 0 0 4px 0;
+    line-height: 1.3;
+}
+
+.product-price {
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--warm-brown);
+    margin: 0 0 10px 0;
+}
+
+.product-button {
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 10px 20px;
+    background: linear-gradient(135deg, var(--dusty-rose) 0%, var(--terracotta) 100%);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.product-button:hover:not(:disabled) {
+    transform: scale(1.02);
+    box-shadow: 0 4px 15px rgba(212, 165, 165, 0.4);
+}
+
+.product-button:disabled {
+    background: var(--text-light);
+    cursor: not-allowed;
 }
 
 
@@ -417,9 +526,30 @@ body {
         font-size: 0.95rem;
     }
 
-    .product-section {
-        padding: 0.75rem;
-        border-radius: 20px;
+    .product-grid {
+        gap: 10px;
+    }
+
+    .product-card {
+        padding: 10px;
+        border-radius: 16px;
+    }
+
+    .product-image {
+        border-radius: 12px;
+    }
+
+    .product-title {
+        font-size: 0.8rem;
+    }
+
+    .product-price {
+        font-size: 0.85rem;
+    }
+
+    .product-button {
+        font-size: 0.75rem;
+        padding: 8px 16px;
     }
 
     .btn-shop {
@@ -476,16 +606,14 @@ body {
 /* Tablet and up */
 @media (min-width: 768px) {
     .main-container {
+        max-width: 800px;
         padding: 3rem 2rem 4rem;
     }
+}
 
-    .gallery-grid {
-        gap: 1rem;
-        padding: 1.25rem;
-    }
-
-    .gallery-item {
-        border-radius: 20px;
+@media (min-width: 1024px) {
+    .main-container {
+        max-width: 900px;
     }
 }
 
