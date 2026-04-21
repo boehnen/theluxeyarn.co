@@ -354,12 +354,7 @@ async function addToCart(variantId, button) {
         }
 
         // Use SDK's native method to sync and render
-        try {
-            await cart.fetchData();
-        } catch (e) {
-            // Fallback: manually trigger render
-            cart.view.render();
-        }
+        await cart.fetchData();
 
         // Update toggle
         if (cart.toggles && cart.toggles[0]) {
