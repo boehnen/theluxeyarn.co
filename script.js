@@ -49,12 +49,13 @@ document.addEventListener('DOMContentLoaded', function() {
 const SHOPIFY_DOMAIN = 'ycq1ca-jy.myshopify.com';
 const STOREFRONT_TOKEN = '5f1115e8ba06b85dfc55f6fc89f136e5'; // Has inventory access
 const CART_TOKEN = '1a15380bfdef78c677355b167aa5cd12'; // Buy Button token for cart
-const COLLECTION_ID = 'gid://shopify/Collection/538440794413';
+const COLLECTION_HANDLE = 'popular';
 
 // Initialize Shopify Buy SDK for cart functionality
 let shopifyClient = null;
 let shopifyUI = null;
 let cart = null;
+let allProducts = []; // Store products for resize handling
 
 async function initShopify() {
     // Load the Buy Button SDK
@@ -196,8 +197,8 @@ async function initShopify() {
 async function fetchAndRenderProducts() {
     const query = `
         query {
-            collection(id: "${COLLECTION_ID}") {
-                products(first: 20) {
+            collectionByHandle(handle: "${COLLECTION_HANDLE}") {
+                products(first: 8) {
                     edges {
                         node {
                             id
@@ -244,18 +245,32 @@ async function fetchAndRenderProducts() {
         });
 
         const data = await response.json();
-        const products = data.data.collection.products.edges.map(edge => edge.node);
-        renderProducts(products);
+        allProducts = data.data.collectionByHandle.products.edges.map(edge => edge.node);
+        renderProducts(allProducts, window.innerWidth);
+
+        // Re-render on resize to adjust product count
+        let resizeTimeout;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                renderProducts(allProducts, window.innerWidth);
+            }, 250);
+        });
     } catch (error) {
         console.error('Error fetching products:', error);
     }
 }
 
-function renderProducts(products) {
+function renderProducts(products, screenWidth) {
     const container = document.getElementById('product-grid');
     container.innerHTML = '';
 
-    products.forEach(product => {
+    // Show 6 on mobile, 8 on desktop
+    const isMobile = screenWidth < 768;
+    const maxProducts = isMobile ? 6 : 8;
+    const displayProducts = products.slice(0, maxProducts);
+
+    displayProducts.forEach(product => {
         const variant = product.variants.edges[0]?.node;
         const images = product.images.edges.map(e => e.node);
         const image = images[0];
