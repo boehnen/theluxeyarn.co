@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', function() {
 const SHOPIFY_DOMAIN = 'ycq1ca-jy.myshopify.com';
 const STOREFRONT_TOKEN = '5f1115e8ba06b85dfc55f6fc89f136e5'; // Has inventory access
 const CART_TOKEN = '1a15380bfdef78c677355b167aa5cd12'; // Buy Button token for cart
-const COLLECTION_HANDLE = 'popular';
+const COLLECTION_ID = 'gid://shopify/Collection/538471760173';
 
 // Initialize Shopify Buy SDK for cart functionality
 let shopifyClient = null;
@@ -197,7 +197,7 @@ async function initShopify() {
 async function fetchAndRenderProducts() {
     const query = `
         query {
-            collectionByHandle(handle: "${COLLECTION_HANDLE}") {
+            collection(id: "${COLLECTION_ID}") {
                 products(first: 8) {
                     edges {
                         node {
@@ -245,7 +245,7 @@ async function fetchAndRenderProducts() {
         });
 
         const data = await response.json();
-        allProducts = data.data.collectionByHandle.products.edges.map(edge => edge.node);
+        allProducts = data.data.collection.products.edges.map(edge => edge.node);
         renderProducts(allProducts, window.innerWidth);
 
         // Re-render on resize to adjust product count
