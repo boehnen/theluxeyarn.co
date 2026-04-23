@@ -56,6 +56,7 @@ let shopifyClient = null;
 let shopifyUI = null;
 let cart = null;
 let allProducts = []; // Store products for resize handling
+let shopSettings = {}; // Store shop-level metafields
 
 async function initShopify() {
     // Load the Buy Button SDK
@@ -190,6 +191,20 @@ async function initShopify() {
         }
     });
 
+    // Poll for cart restoration from localStorage, then update collection link
+    let cartCheckAttempts = 0;
+    const checkCartReady = () => {
+        cartCheckAttempts++;
+        const cart = shopifyUI.components.cart?.[0];
+        if (cart && cart.model && cart.model.lineItems && cart.model.lineItems.length > 0) {
+            updateCollectionLink();
+        } else if (cartCheckAttempts < 15) {
+            // Keep checking until cart is ready (up to 3 seconds)
+            setTimeout(checkCartReady, 200);
+        }
+    };
+    setTimeout(checkCartReady, 200);
+
     // Fetch and render products
     await fetchAndRenderProducts();
 }
@@ -227,8 +242,25 @@ async function fetchAndRenderProducts() {
                                 }
                             }
                             totalInventory
+                            stockStatus: metafield(namespace: "custom", key: "stock_status") {
+                                value
+                            }
                         }
                     }
+                }
+            }
+            shop {
+                leadTimeWeeks: metafield(namespace: "custom", key: "lead_time_weeks") {
+                    value
+                }
+                vacationStart: metafield(namespace: "custom", key: "vacation_start_date") {
+                    value
+                }
+                vacationReturn: metafield(namespace: "custom", key: "vacation_return_date") {
+                    value
+                }
+                ordersPaused: metafield(namespace: "custom", key: "custom_orders_paused") {
+                    value
                 }
             }
         }
@@ -246,6 +278,16 @@ async function fetchAndRenderProducts() {
 
         const data = await response.json();
         allProducts = data.data.collection.products.edges.map(edge => edge.node);
+
+        // Extract shop settings
+        const shop = data.data.shop;
+        shopSettings = {
+            leadTimeWeeks: parseInt(shop.leadTimeWeeks?.value) || 3,
+            vacationStart: shop.vacationStart?.value || null,
+            vacationReturn: shop.vacationReturn?.value || null,
+            ordersPaused: shop.ordersPaused?.value === 'true'
+        };
+
         renderProducts(allProducts, window.innerWidth);
 
         // Re-render on resize to adjust product count
@@ -261,11 +303,67 @@ async function fetchAndRenderProducts() {
     }
 }
 
+function getVacationState() {
+    const now = new Date();
+    const returnDate = shopSettings.vacationReturn ? new Date(shopSettings.vacationReturn) : null;
+    const startDate = shopSettings.vacationStart ? new Date(shopSettings.vacationStart) : null;
+
+    if (!returnDate || returnDate <= now) {
+        return 'none';
+    } else if (!startDate) {
+        return 'in-progress';
+    } else if (startDate > now) {
+        return 'upcoming';
+    } else {
+        return 'in-progress';
+    }
+}
+
+function formatDate(dateStr) {
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
+function renderAnnouncementBar() {
+    const existing = document.getElementById('announcement-bar');
+    if (existing) existing.remove();
+
+    const vacationState = getVacationState();
+    let message = '';
+    let icon = '';
+
+    if (shopSettings.ordersPaused && vacationState === 'in-progress') {
+        icon = '✈️';
+        message = `I'm away until ${formatDate(shopSettings.vacationReturn)}. Custom orders paused while I catch up.`;
+    } else if (shopSettings.ordersPaused) {
+        icon = '⏸️';
+        message = 'Custom and made-to-order items paused while I catch up.';
+    } else if (vacationState === 'in-progress') {
+        icon = '✈️';
+        message = `I'm away until ${formatDate(shopSettings.vacationReturn)}. Orders ship after I return.`;
+    } else if (vacationState === 'upcoming') {
+        icon = '📦';
+        message = `I'll be away ${formatDate(shopSettings.vacationStart)} to ${formatDate(shopSettings.vacationReturn)}. Order soon to ship before I leave!`;
+    } else {
+        icon = '🧶';
+        message = `Currently making pieces ~${shopSettings.leadTimeWeeks} weeks out`;
+    }
+
+    const bar = document.createElement('div');
+    bar.id = 'announcement-bar';
+    bar.className = 'announcement-bar';
+    bar.innerHTML = `<span class="announcement-icon">${icon}</span> ${message}`;
+
+    const mainContainer = document.querySelector('.main-container');
+    if (mainContainer) {
+        mainContainer.insertBefore(bar, mainContainer.firstChild);
+    }
+}
+
 function renderProducts(products, screenWidth) {
     const container = document.getElementById('product-grid');
     container.innerHTML = '';
 
-    // Show 6 on mobile, 8 on desktop
     const isMobile = screenWidth < 768;
     const maxProducts = isMobile ? 6 : 8;
     const displayProducts = products.slice(0, maxProducts);
@@ -274,32 +372,47 @@ function renderProducts(products, screenWidth) {
         const variant = product.variants.edges[0]?.node;
         const images = product.images.edges.map(e => e.node);
         const image = images[0];
-        const hoverImage = images[1] || images[0]; // Second image for hover, fallback to first
+        const hoverImage = images[1] || images[0];
         const price = parseFloat(variant?.price?.amount || 0);
-        const available = variant?.availableForSale;
-        const quantity = variant?.quantityAvailable;
+        const totalInventory = product.totalInventory;
 
+        // Get stock status from metafield (single source of truth)
+        const stockStatus = product.stockStatus?.value || 'in-stock';
 
-
-
-        // Determine inventory badge (quantity may be null if not tracked)
+        // Determine badge and button state based on stock_status metafield
         let badge = '';
-        if (!available) {
-            badge = '<span class="product-badge sold-out">Sold Out</span>';
-        } else if (quantity !== null && quantity === 0) {
-            badge = '<span class="product-badge sold-out">Sold Out</span>';
-        } else if (quantity !== null && quantity === 1) {
-            badge = '<span class="product-badge last-one">Last One!</span>';
-        } else if (quantity !== null && quantity <= 3) {
-            badge = '<span class="product-badge low-stock">Only ' + quantity + ' left</span>';
-        }
-        // If quantity is null, product is available but inventory isn't tracked - no badge
+        let buttonText = 'Add to Cart';
+        let isDisabled = false;
 
-        // Check if product is actually available (null quantity means unlimited/not tracked)
-        const isAvailable = available && (quantity === null || quantity > 0);
+        // Shipping estimate
+        let shippingText = '';
+
+        if (stockStatus === 'sold-out') {
+            badge = '<span class="product-badge sold-out">Sold Out</span>';
+            buttonText = 'Sold Out';
+            isDisabled = true;
+        } else if (stockStatus === 'made-to-order') {
+            if (shopSettings.ordersPaused) {
+                badge = '<span class="product-badge mto">Made to Order</span>';
+                buttonText = 'Currently Paused';
+                isDisabled = true;
+            } else {
+                badge = '<span class="product-badge mto">Made to Order</span>';
+                buttonText = 'Add to Cart';
+                shippingText = `Ships in ~${shopSettings.leadTimeWeeks} weeks`;
+            }
+        } else if (stockStatus === 'in-stock') {
+            shippingText = 'Ships in 1-2 days';
+            // Show low-stock badges only for in-stock items with positive inventory
+            if (totalInventory === 1) {
+                badge = '<span class="product-badge last-one">Last One!</span>';
+            } else if (totalInventory > 1 && totalInventory <= 3) {
+                badge = '<span class="product-badge low-stock">Only ' + totalInventory + ' left</span>';
+            }
+        }
 
         const card = document.createElement('div');
-        card.className = 'product-card' + (!isAvailable ? ' unavailable' : '');
+        card.className = 'product-card' + (isDisabled ? ' unavailable' : '');
         const productUrl = `https://shop.theluxeyarn.co/products/${product.handle}`;
 
         card.innerHTML = `
@@ -310,14 +423,14 @@ function renderProducts(products, screenWidth) {
             </a>
             <h3 class="product-title">${product.title}</h3>
             <p class="product-price">$${price.toFixed(2)}</p>
-            <button class="product-button" data-variant-id="${variant?.id}" ${!isAvailable ? 'disabled' : ''}>
-                ${!isAvailable ? 'Sold Out' : 'Add to Cart'}
+            ${shippingText ? `<p class="product-shipping">${shippingText}</p>` : ''}
+            <button class="product-button" data-variant-id="${variant?.id}" ${isDisabled ? 'disabled' : ''}>
+                ${buttonText}
             </button>
         `;
 
-        // Add to cart functionality
         const button = card.querySelector('.product-button');
-        if (isAvailable) {
+        if (!isDisabled) {
             button.addEventListener('click', () => addToCart(variant.id, button));
         }
 
@@ -361,6 +474,9 @@ async function addToCart(variantId, button) {
             cart.toggles[0].view.render();
         }
 
+        // Update collection link with cart items
+        updateCollectionLink();
+
         // Open the cart
         cart.open();
 
@@ -377,6 +493,37 @@ async function addToCart(variantId, button) {
             button.disabled = false;
         }, 1500);
     }
+}
+
+// Update "View Full Collection" link to include cart items
+function updateCollectionLink() {
+    const link = document.querySelector('.btn-shop');
+    if (!link) return;
+
+    const baseUrl = 'https://shop.theluxeyarn.co';
+    const targetPage = '/collections/all';
+
+    // Check if we have a cart with items
+    if (shopifyUI && shopifyUI.components.cart && shopifyUI.components.cart[0]) {
+        const cart = shopifyUI.components.cart[0];
+        if (cart.model && cart.model.lineItems && cart.model.lineItems.length > 0) {
+            // Use /cart/add endpoint which adds to native Shopify cart and redirects
+            // Format: /cart/add?id=variantId&quantity=qty&id=variantId2&quantity=qty2&return_to=/path
+            const params = new URLSearchParams();
+            cart.model.lineItems.forEach(item => {
+                const variantId = item.variant.id.replace('gid://shopify/ProductVariant/', '');
+                params.append('id[]', variantId);
+                params.append('quantity[]', item.quantity);
+            });
+            params.append('return_to', targetPage);
+
+            link.href = `${baseUrl}/cart/add?${params.toString()}`;
+            return;
+        }
+    }
+
+    // No cart items, link to collections
+    link.href = `${baseUrl}${targetPage}`;
 }
 
 // Initialize everything
