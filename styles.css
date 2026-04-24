@@ -242,6 +242,7 @@ body {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    height: 1.3em;
 }
 
 .product-price {
@@ -577,6 +578,7 @@ body {
 
     .product-title {
         font-size: 0.8rem;
+        height: 1.3em;
     }
 
     .product-price {

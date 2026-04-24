@@ -438,10 +438,7 @@ async function addToCart(variantId, button) {
         // Use SDK's native method to sync and render
         await cart.fetchData();
 
-        // Explicitly render cart view and toggle (fixes mobile rendering)
-        if (cart.view) {
-            cart.view.render();
-        }
+        // Update toggle count
         if (cart.toggles && cart.toggles[0]) {
             cart.toggles[0].view.render();
         }
@@ -449,8 +446,14 @@ async function addToCart(variantId, button) {
         // Update collection link with cart items
         updateCollectionLink();
 
-        // Open the cart
-        cart.open();
+        // Open cart with delay to allow render to complete (fixes mobile)
+        setTimeout(() => {
+            cart.open();
+            // Re-render after opening to ensure line items display on mobile
+            if (cart.view) {
+                cart.view.render();
+            }
+        }, 100);
 
         button.textContent = 'Added!';
         setTimeout(() => {
