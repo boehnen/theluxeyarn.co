@@ -250,13 +250,10 @@ async function fetchAndRenderProducts() {
                 }
             }
             shop {
-                leadTimeWeeks: metafield(namespace: "custom", key: "lead_time_weeks") {
+                mtoShipDelayWeeks: metafield(namespace: "custom", key: "mto_ship_delay_weeks") {
                     value
                 }
-                vacationStart: metafield(namespace: "custom", key: "vacation_start_date") {
-                    value
-                }
-                vacationReturn: metafield(namespace: "custom", key: "vacation_return_date") {
+                inStockShipDelayDays: metafield(namespace: "custom", key: "in_stock_ship_delay_days") {
                     value
                 }
                 ordersPaused: metafield(namespace: "custom", key: "custom_orders_paused") {
@@ -279,12 +276,11 @@ async function fetchAndRenderProducts() {
         const data = await response.json();
         allProducts = data.data.collection.products.edges.map(edge => edge.node);
 
-        // Extract shop settings
+        // Extract shop settings (pre-computed by Shopify Flow)
         const shop = data.data.shop;
         shopSettings = {
-            leadTimeWeeks: parseInt(shop.leadTimeWeeks?.value) || 3,
-            vacationStart: shop.vacationStart?.value || null,
-            vacationReturn: shop.vacationReturn?.value || null,
+            mtoShipDelayWeeks: parseInt(shop.mtoShipDelayWeeks?.value) || 3,
+            inStockShipDelayDays: parseInt(shop.inStockShipDelayDays?.value) || 2,
             ordersPaused: shop.ordersPaused?.value === 'true'
         };
 
@@ -303,50 +299,23 @@ async function fetchAndRenderProducts() {
     }
 }
 
-function getVacationState() {
-    const now = new Date();
-    const returnDate = shopSettings.vacationReturn ? new Date(shopSettings.vacationReturn) : null;
-    const startDate = shopSettings.vacationStart ? new Date(shopSettings.vacationStart) : null;
-
-    if (!returnDate || returnDate <= now) {
-        return 'none';
-    } else if (!startDate) {
-        return 'in-progress';
-    } else if (startDate > now) {
-        return 'upcoming';
-    } else {
-        return 'in-progress';
-    }
-}
-
-function formatDate(dateStr) {
-    const date = new Date(dateStr);
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-}
-
 function renderAnnouncementBar() {
     const existing = document.getElementById('announcement-bar');
     if (existing) existing.remove();
 
-    const vacationState = getVacationState();
     let message = '';
     let icon = '';
 
-    if (shopSettings.ordersPaused && vacationState === 'in-progress') {
-        icon = '✈️';
-        message = `I'm away until ${formatDate(shopSettings.vacationReturn)}. Custom orders paused while I catch up.`;
-    } else if (shopSettings.ordersPaused) {
+    // Simple logic using pre-computed delays from Shopify Flow
+    if (shopSettings.ordersPaused) {
         icon = '⏸️';
         message = 'Custom and made-to-order items paused while I catch up.';
-    } else if (vacationState === 'in-progress') {
-        icon = '✈️';
-        message = `I'm away until ${formatDate(shopSettings.vacationReturn)}. Orders ship after I return.`;
-    } else if (vacationState === 'upcoming') {
-        icon = '📦';
-        message = `I'll be away ${formatDate(shopSettings.vacationStart)} to ${formatDate(shopSettings.vacationReturn)}. Order soon to ship before I leave!`;
-    } else {
+    } else if (shopSettings.mtoShipDelayWeeks > 4) {
         icon = '🧶';
-        message = `Currently making pieces ~${shopSettings.leadTimeWeeks} weeks out`;
+        message = `Currently making pieces ~${shopSettings.mtoShipDelayWeeks} weeks out`;
+    } else {
+        // No announcement needed for normal state
+        return;
     }
 
     const bar = document.createElement('div');
@@ -399,10 +368,10 @@ function renderProducts(products, screenWidth) {
             } else {
                 badge = '<span class="product-badge mto">Made to Order</span>';
                 buttonText = 'Add to Cart';
-                shippingText = `Ships in ~${shopSettings.leadTimeWeeks} weeks`;
+                shippingText = `Ships in ~${shopSettings.mtoShipDelayWeeks} weeks`;
             }
         } else if (stockStatus === 'in-stock') {
-            shippingText = 'Ships in 1-2 days';
+            shippingText = `Ships in ~${shopSettings.inStockShipDelayDays} business days`;
             // Show low-stock badges only for in-stock items with positive inventory
             if (totalInventory === 1) {
                 badge = '<span class="product-badge last-one">Last One!</span>';
@@ -469,7 +438,10 @@ async function addToCart(variantId, button) {
         // Use SDK's native method to sync and render
         await cart.fetchData();
 
-        // Update toggle
+        // Explicitly render cart view and toggle (fixes mobile rendering)
+        if (cart.view) {
+            cart.view.render();
+        }
         if (cart.toggles && cart.toggles[0]) {
             cart.toggles[0].view.render();
         }
